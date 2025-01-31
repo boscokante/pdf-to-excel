@@ -1,0 +1,161 @@
+RAW LINE: 2. Revolving Accounts
+CLEAN LINE: 2. Revolving Accounts
+RAW LINE: Revolving accounts are those that generally include a credit limit and require a minimum monthly payment, such as credit cards.
+CLEAN LINE: Revolving accounts are those that generally include a credit limit and require a minimum monthly payment, such as credit cards.
+RAW LINE: 2.1 BARCLAYS BANK DELAWARE (CLOSED)
+CLEAN LINE: 2.1 BARCLAYS BANK DELAWARE (CLOSED)
+RAW LINE: Summary
+CLEAN LINE: Summary
+RAW LINE: Your debt-to-credit ratio represents the amount of credit you're using and generally makes up a percentage of your credit score. It's
+CLEAN LINE: Your debt-to-credit ratio represents the amount of credit you're using and generally makes up a percentage of your credit score. It's
+RAW LINE: calculated by dividing an account's reported balance by its credit limit.
+CLEAN LINE: calculated by dividing an account's reported balance by its credit limit.
+RAW LINE: Account Number xxxxxxxx 5205 Reported Balance $949
+CLEAN LINE: Account Number xxxxxxxx 5205 Reported Balance $949
+RAW LINE: Account Status CHARGE_OFF Available Credit -$449
+CLEAN LINE: Account Status CHARGE_OFF Available Credit -$449
+RAW LINE: Account History
+CLEAN LINE: Account History
+RAW LINE: The tables below show up to 24 months historical data. If a table is blank, this data was not provided to Equifax.
+CLEAN LINE: The tables below show up to 24 months historical data. If a table is blank, this data was not provided to Equifax.
+RAW LINE: Balance
+CLEAN LINE: Balance
+RAW LINE: Year Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
+CLEAN LINE: Year Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
+RAW LINE: 2023 $949 $949 $949 $949 $949 $949 $949 $949 $949 $949 $949 $949
+CLEAN LINE: 2023 $949 $949 $949 $949 $949 $949 $949 $949 $949 $949 $949 $949
+RAW LINE: 2024 $949 $949 $949 $949 $949 $949 $949 $949 $949 $949 $949 $949
+CLEAN LINE: 2024 $949 $949 $949 $949 $949 $949 $949 $949 $949 $949 $949 $949
+RAW LINE: 2025
+CLEAN LINE: 2025
+RAW LINE: Scheduled Payment
+CLEAN LINE: Scheduled Payment
+RAW LINE: Year Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
+CLEAN LINE: Year Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
+RAW LINE: 2023
+CLEAN LINE: 2023
+RAW LINE: 2024
+CLEAN LINE: 2024
+RAW LINE: 2025
+CLEAN LINE: 2025
+RAW LINE: Actual Payment
+CLEAN LINE: Actual Payment
+RAW LINE: Year Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
+CLEAN LINE: Year Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
+RAW LINE: 2023
+CLEAN LINE: 2023
+RAW LINE: 2024
+CLEAN LINE: 2024
+RAW LINE: 2025
+CLEAN LINE: 2025
+RAW LINE: Credit Limit
+CLEAN LINE: Credit Limit
+RAW LINE: | Jan 19, 2025 Page 4 of 58
+CLEAN LINE: | Jan 19, 2025 Page 4 of 58
+RAW LINE: Year Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
+CLEAN LINE: Year Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
+RAW LINE: 2023 $500 $500 $500 $500 $500 $500 $500 $500 $500 $500 $500 $500
+CLEAN LINE: 2023 $500 $500 $500 $500 $500 $500 $500 $500 $500 $500 $500 $500
+RAW LINE: 2024 $500 $500 $500 $500 $500 $500 $500 $500 $500 $500 $500 $500
+CLEAN LINE: 2024 $500 $500 $500 $500 $500 $500 $500 $500 $500 $500 $500 $500
+RAW LINE: 2025
+CLEAN LINE: 2025
+RAW LINE: Amount Past Due
+CLEAN LINE: Amount Past Due
+RAW LINE: Year Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
+CLEAN LINE: Year Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
+RAW LINE: 2023 $949 $949 $949 $949 $949 $949 $949 $949 $949 $949 $949 $949
+CLEAN LINE: 2023 $949 $949 $949 $949 $949 $949 $949 $949 $949 $949 $949 $949
+RAW LINE: 2024 $949 $949 $949 $949 $949 $949 $949 $949 $949 $949 $949 $949
+CLEAN LINE: 2024 $949 $949 $949 $949 $949 $949 $949 $949 $949 $949 $949 $949
+RAW LINE: 2025
+CLEAN LINE: 2025
+RAW LINE: Payment History
+CLEAN LINE: Payment History
+RAW LINE: View up to 7 years of monthly payment history on this account. The numbers indicated in each month represent the number of days a
+CLEAN LINE: View up to 7 years of monthly payment history on this account. The numbers indicated in each month represent the number of days a
+RAW LINE: payment was past due; the letters indicate other account events, such as bankruptcy or collections.
+CLEAN LINE: payment was past due; the letters indicate other account events, such as bankruptcy or collections.
+RAW LINE: Year Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
+CLEAN LINE: Year Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec
+RAW LINE: 2024 CO CO CO CO CO CO CO CO CO CO CO CO
+CLEAN LINE: 2024 CO CO CO CO CO CO CO CO CO CO CO CO
+RAW LINE: 2023 CO CO CO CO CO CO CO CO CO CO CO CO
+CLEAN LINE: 2023 CO CO CO CO CO CO CO CO CO CO CO CO
+RAW LINE: 2022 CO CO CO CO CO CO CO CO CO CO CO CO
+CLEAN LINE: 2022 CO CO CO CO CO CO CO CO CO CO CO CO
+RAW LINE: 2021 CO CO CO CO CO CO CO CO CO CO CO CO
+CLEAN LINE: 2021 CO CO CO CO CO CO CO CO CO CO CO CO
+RAW LINE: 2020 120 150 180 CO CO CO CO CO CO CO CO CO
+CLEAN LINE: 2020 120 150 180 CO CO CO CO CO CO CO CO CO
+RAW LINE: 2019 30 60 90
+CLEAN LINE: 2019 30 60 90
+RAW LINE: 2018
+CLEAN LINE: 2018
+RAW LINE: Paid on Time 30 30 Days Past Due 60 60 Days Past Due 90 90 Days Past Due 120120 Days Past Due
+CLEAN LINE: Paid on Time 30 30 Days Past Due 60 60 Days Past Due 90 90 Days Past Due 120120 Days Past Due
+RAW LINE: 150150 Days Past Due 180180 Days Past Due V Voluntary Surrender F Foreclosure C Collection Account
+CLEAN LINE: 150150 Days Past Due 180180 Days Past Due V Voluntary Surrender F Foreclosure C Collection Account
+RAW LINE: COCharge-Off B Included in Bankruptcy R Repossession TN Too New to Rate No Data Available
+CLEAN LINE: COCharge-Off B Included in Bankruptcy R Repossession TN Too New to Rate No Data Available
+RAW LINE: Account Details
+CLEAN LINE: Account Details
+RAW LINE: View detailed information about this account. Contact the creditor or lender if you have any questions about it.
+CLEAN LINE: View detailed information about this account. Contact the creditor or lender if you have any questions about it.
+RAW LINE: High Credit Payment Responsibility INDIVIDUAL
+CLEAN LINE: High Credit Payment Responsibility INDIVIDUAL
+RAW LINE: Credit Limit $500 Account Type REVOLVING
+CLEAN LINE: Credit Limit $500 Account Type REVOLVING
+RAW LINE: Terms Frequency MONTHLY Term Duration
+CLEAN LINE: Terms Frequency MONTHLY Term Duration
+RAW LINE: | Jan 19, 2025 Page 5 of 58
+CLEAN LINE: | Jan 19, 2025 Page 5 of 58
+RAW LINE: Balance $949 Date Opened Jan 05, 2017
+CLEAN LINE: Balance $949 Date Opened Jan 05, 2017
+RAW LINE: Amount Past Due $949 Date Reported Jan 02, 2025
+CLEAN LINE: Amount Past Due $949 Date Reported Jan 02, 2025
+RAW LINE: Actual Payment Amount Date of Last Payment Jun 2019
+CLEAN LINE: Actual Payment Amount Date of Last Payment Jun 2019
+RAW LINE: Date of Last Activity Scheduled Payment Amount
+CLEAN LINE: Date of Last Activity Scheduled Payment Amount
+RAW LINE: Months Reviewed 96 Delinquency First Reported
+CLEAN LINE: Months Reviewed 96 Delinquency First Reported
+RAW LINE: Activity Designator CLOSED Creditor Classification UNKNOWN
+CLEAN LINE: Activity Designator CLOSED Creditor Classification UNKNOWN
+RAW LINE: Deferred Payment Start Date Charge Off Amount $580
+CLEAN LINE: Deferred Payment Start Date Charge Off Amount $580
+RAW LINE: Balloon Payment Date Balloon Payment Amount
+CLEAN LINE: Balloon Payment Date Balloon Payment Amount
+RAW LINE: Loan Type Flexible Spending Credit Card Date Closed Dec 2019
+CLEAN LINE: Loan Type Flexible Spending Credit Card Date Closed Dec 2019
+RAW LINE: Date of First Delinquency Sep 2019
+CLEAN LINE: Date of First Delinquency Sep 2019
+RAW LINE: Comments Contact
+CLEAN LINE: Comments Contact
+RAW LINE: Charged off account BARCLAYS BANK DELAWARE
+CLEAN LINE: Charged off account BARCLAYS BANK DELAWARE
+RAW LINE: PO Box 8803
+CLEAN LINE: PO Box 8803
+RAW LINE: Account closed by credit grantor
+CLEAN LINE: Account closed by credit grantor
+RAW LINE: Wilmington, DE 19899-8803
+CLEAN LINE: Wilmington, DE 19899-8803
+RAW LINE: (888) 232-0780
+CLEAN LINE: (888) 232-0780
+RAW LINE: | Jan 19, 2025 Page 6 of 58
+CLEAN LINE: | Jan 19, 2025 Page 6 of 58
+RAW LINE: 
+CLEAN LINE: 2025-01-31 01:36:36,264 - DEBUG - getobj: objid=2
+2025-01-31 01:36:36,264 - DEBUG - Pages: Kids=[<PDFObjRef:1>, <PDFObjRef:15>, <PDFObjRef:22>]
+2025-01-31 01:36:36,264 - DEBUG - getobj: objid=1
+2025-01-31 01:36:36,264 - DEBUG - Page: {'Type': /'Page', 'Parent': <PDFObjRef:2>, 'Resources': <PDFObjRef:4>, 'Contents': <PDFObjRef:3>, 'MediaBox': [0, 0, 612, 792], 'Rotate': 0}
+2025-01-31 01:36:36,264 - DEBUG - getobj: objid=4
+2025-01-31 01:36:36,264 - DEBUG - getobj: objid=3
+2025-01-31 01:36:36,264 - DEBUG - getobj: objid=15
+2025-01-31 01:36:36,264 - DEBUG - Page: {'Type': /'Page', 'Parent': <PDFObjRef:2>, 'Resources': <PDFObjRef:17>, 'Contents': <PDFObjRef:16>, 'MediaBox': [0, 0, 612, 792], 'Rotate': 0}
+2025-01-31 01:36:36,264 - DEBUG - getobj: objid=17
+2025-01-31 01:36:36,264 - DEBUG - getobj: objid=16
+2025-01-31 01:36:36,264 - DEBUG - getobj: objid=22
+2025-01-31 01:36:36,264 - DEBUG - Page: {'Type': /'Page', 'Parent': <PDFObjRef:2>, 'Resources': <PDFObjRef:24>, 'Contents': <PDFObjRef:23>, 'MediaBox': [0, 0, 612, 792], 'Rotate': 0}
+2025-01-31 01:36:36,264 - DEBUG - getobj: objid=24
+2025-01-31 01:36:36,264 - DEBUG - getobj: objid=23

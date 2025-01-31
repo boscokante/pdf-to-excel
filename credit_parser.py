@@ -5,148 +5,295 @@ from typing import Optional, List
 from pathlib import Path
 from datetime import datetime
 from calendar import month_abbr
+import logging
+import re
+
+# Configure logging at the start of the file
+logging.basicConfig(
+    level=logging.DEBUG,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.FileHandler('debug.log'),
+        logging.StreamHandler()
+    ]
+)
 
 @dataclass
-class HistoryPoint:
+class MonthlyData:
     year: int
-    month_id: int
     month_name: str
-    balance: Optional[float] = None
-    scheduled_payment: Optional[float] = None
-    actual_payment: Optional[float] = None
-    credit_limit: Optional[float] = None
-    amount_past_due: Optional[float] = None
+    value: Optional[float] = None
+
+@dataclass
+class AccountHistorySection:
+    name: str
+    monthly_data: List[MonthlyData] = field(default_factory=list)
+    years: List[int] = field(default_factory=list)
 
 @dataclass
 class Tradeline:
-    # Summary section
+    # Section 1: Header Information
+    date_reported: str
+    cra: str
+    
+    # Section 2: Account Information
     account_name: str
     account_number: str
     reported_balance: Optional[float]
     account_status: str
     available_credit: Optional[float]
-    # Account History section
-    history_points: List[HistoryPoint] = field(default_factory=list)
+    high_credit: Optional[float]
+    payment_responsibility: str
     
+    # Section 3: Account Details
+    credit_limit: Optional[float]
+    account_type: str
+    terms_frequency: str
+    term_duration: Optional[str]
+    balance: Optional[float]
+    date_opened: str
+    amount_past_due: Optional[float]
+    date_reported_details: str
+    actual_payment_amount: Optional[float]
+    date_of_last_payment: str
+    date_of_last_activity: Optional[str]
+    scheduled_payment_amount: Optional[float]
+    
+    # Section 4: Historical Information
+    months_reviewed: int
+    delinquency_first_reported: Optional[str]
+    activity_designator: str
+    
+    # Section 5: Creditor Information
+    creditor_classification: str
+    deferred_payment_start_date: Optional[str]
+    charge_off_amount: Optional[float]
+    balloon_payment_date: Optional[str]
+    balloon_payment_amount: Optional[float]
+    loan_type: str
+    
+    # Section 6: Account Status
+    date_closed: str
+    date_of_first_delinquency: str
+    
+    # Section 7: Comments
+    comments: str
+    
+    # Section 8: Creditor Contact
+    contact_name: str
+    contact_address: str
+    contact_city_state_zip: str
+    contact_phone: str
+
     def to_dict(self):
         return {
-            'SUMMARY': '',  # Empty value for header
+            'Date Reported': self.date_reported,
+            'CRA': self.cra,
             'Account Name': self.account_name,
             'Account Number': self.account_number,
             'Reported Balance': self.reported_balance,
             'Account Status': self.account_status,
             'Available Credit': self.available_credit,
-            '': '',  # Empty row for spacing
-            'ACCOUNT HISTORY': ''  # New section header
+            'High Credit': self.high_credit,
+            'Payment Responsibility': self.payment_responsibility,
+            'Credit Limit': self.credit_limit,
+            'Account Type': self.account_type,
+            'Terms/Frequency': self.terms_frequency,
+            'Term Duration': self.term_duration,
+            'Balance': self.balance,
+            'Date Opened': self.date_opened,
+            'Amount Past Due': self.amount_past_due,
+            'Date Reported (Details)': self.date_reported_details,
+            'Actual Payment Amount': self.actual_payment_amount,
+            'Date of Last Payment': self.date_of_last_payment,
+            'Date of Last Activity': self.date_of_last_activity,
+            'Scheduled Payment Amount': self.scheduled_payment_amount,
+            'Months Reviewed': self.months_reviewed,
+            'Delinquency First Reported': self.delinquency_first_reported,
+            'Activity Designator': self.activity_designator,
+            'Creditor Classification': self.creditor_classification,
+            'Deferred Payment Start Date': self.deferred_payment_start_date,
+            'Charge-off Amount': self.charge_off_amount,
+            'Balloon Payment Date': self.balloon_payment_date,
+            'Balloon Payment Amount': self.balloon_payment_amount,
+            'Loan Type': self.loan_type,
+            'Date Closed': self.date_closed,
+            'Date of First Delinquency': self.date_of_first_delinquency,
+            'Comments': self.comments,
+            'Contact Name': self.contact_name,
+            'Contact Address': self.contact_address,
+            'Contact City/State/ZIP': self.contact_city_state_zip,
+            'Contact Phone': self.contact_phone
         }
 
 def extract_tradeline(pdf_path: str) -> Tradeline:
+    debug_output = []
+    
     with pdfplumber.open(pdf_path) as pdf:
-        page = pdf.pages[0]
-        text = page.extract_text()
+        # Add PDF content debugging
+        print("\n=== RAW PDF TEXT ===")
+        full_text = ""
+        for page_num, page in enumerate(pdf.pages):
+            page_text = page.extract_text()
+            print(f"\nPage {page_num + 1}:\n{page_text}")
+            full_text += page_text + "\n"
+        print("=== END PDF TEXT ===\n")
         
-        lines = text.split('\n')
-        account_name = ""
-        account_number = ""
-        reported_balance = None
-        account_status = ""
-        available_credit = None
-        history_data = {}
+        lines = full_text.split('\n')
         
-        # Get account name from the first line that contains a bank name
-        for line in lines:
-            if any(x in line.upper() for x in ["BANK", "FCU", "CREDIT UNION", "FINANCIAL"]):
-                account_name = line.strip()
-                break
-        
-        # Track if we're in the payment history section
-        in_payment_history = False
-        current_year = None
-        months = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", 
-                 "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
-        
-        # First pass to find the most recent year
-        most_recent_year = None
-        for line in lines:
-            if line.strip() and line[0:4].isdigit():
-                year = int(line[0:4])
-                if most_recent_year is None or year > most_recent_year:
-                    most_recent_year = year
+        # Initialize all fields with default values
+        data = {
+            'date_reported': 'N/A',
+            'cra': 'Equifax',
+            'account_name': 'N/A',
+            'account_number': 'N/A',
+            'reported_balance': None,
+            'account_status': 'N/A',
+            'available_credit': None,
+            'high_credit': None,
+            'payment_responsibility': 'N/A',
+            'credit_limit': None,
+            'account_type': 'N/A',
+            'terms_frequency': 'N/A',
+            'term_duration': None,
+            'balance': None,
+            'date_opened': 'N/A',
+            'amount_past_due': None,
+            'date_reported_details': 'N/A',
+            'actual_payment_amount': None,
+            'date_of_last_payment': 'N/A',
+            'date_of_last_activity': None,
+            'scheduled_payment_amount': None,
+            'months_reviewed': 0,
+            'delinquency_first_reported': None,
+            'activity_designator': 'N/A',
+            'creditor_classification': 'N/A',
+            'deferred_payment_start_date': None,
+            'charge_off_amount': None,
+            'balloon_payment_date': None,
+            'balloon_payment_amount': None,
+            'loan_type': 'N/A',
+            'date_closed': 'N/A',
+            'date_of_first_delinquency': 'N/A',
+            'comments': 'N/A',
+            'contact_name': 'N/A',
+            'contact_address': 'N/A',
+            'contact_city_state_zip': 'N/A',
+            'contact_phone': 'N/A'
+        }
 
-        # Extract account details
+        current_section = None
+        contact_lines = []
+        in_balance_history = False
+
         for line in lines:
-            # Get account number and balance
-            if "Account Number" in line and "Reported Balance" in line:
-                acc_parts = line.split("Reported Balance")[0].split()
-                account_number = ' '.join(acc_parts[-2:])
-                try:
-                    balance_str = line.split("$")[1].strip()
-                    reported_balance = float(balance_str.replace(',', ''))
-                except (IndexError, ValueError):
-                    print("Error parsing balance")
+            line = line.replace('\x0c', ' ')  # Keep form feed handling
+            debug_output.append(f"RAW LINE: {line}")
             
-            # Get status and available credit
-            if "Account Status" in line and "Available Credit" in line:
-                status_parts = line.split("Available Credit")
-                account_status = status_parts[0].replace("Account Status", "").strip()
-                try:
-                    credit_str = status_parts[1].replace("$", "").strip()
-                    if credit_str and credit_str != "NONE":
-                        available_credit = float(credit_str.replace(',', ''))
-                except (IndexError, ValueError):
-                    print("Error parsing credit")
-            
-            # Parse payment history
-            if line.strip() and line[0:4].isdigit():
-                year = int(line[0:4])
-                values = line[4:].split()
-                
-                # Process each month's value
-                for i, value in enumerate(values):
-                    if value.strip() and value != "-" and value.replace(',', '').isdigit():
-                        month_index = i
-                        
-                        # Calculate month_id (36 to 1)
-                        months_from_recent = ((most_recent_year - year) * 12) + (11 - month_index)
-                        month_id = 36 - months_from_recent
-                        
-                        if month_id > 0:  # Only include last 36 months
-                            history_data[(year, month_id)] = {
-                                'year': year,
-                                'month_id': month_id,
-                                'month_name': months[month_index],
-                                'balance': float(value.replace(',', ''))
-                            }
+            # Clean line while preserving field separators
+            clean_line = ' '.join(line.strip().split())
+            debug_output.append(f"CLEAN LINE: {clean_line}")
 
-        # Create HistoryPoint objects for all 36 months
-        history_points = []
-        for month_id in range(36, 0, -1):  # Changed from 24 to 36
-            months_ago = 36 - month_id  # Changed from 24 to 36
-            year = most_recent_year - (months_ago // 12)
-            month_index = (11 - (months_ago % 12))
-            month_name = months[month_index]
-            
-            # Get data if it exists, otherwise None
-            data = next((data for (y, m), data in history_data.items() 
-                        if m == month_id), None)
-            
-            history_points.append(HistoryPoint(
-                year=year,
-                month_id=month_id,
-                month_name=month_name,
-                balance=data['balance'] if data else None,
-                scheduled_payment=None,
-                actual_payment=None,
-                credit_limit=None,
-                amount_past_due=None
-            ))
+            try:
+                # 1. Parse Account Number and Balance
+                if 'Account Number' in clean_line and 'Reported Balance' in clean_line:
+                    # Format: "Account Number xxxxxxxx 5205 Reported Balance $949"
+                    account_info = {}
+                    parts = re.split(r'\s{2,}', clean_line)  # Split on 2+ spaces
+                    
+                    for i, part in enumerate(parts):
+                        if 'Account Number' in part:
+                            account_info['account_number'] = ' '.join(parts[i+1:i+3]).strip()
+                        elif 'Reported Balance' in part:
+                            account_info['reported_balance'] = parse_currency(parts[i+1])
+                        elif 'Account Status' in part:
+                            account_info['account_status'] = parts[i+1]
+                        elif 'Available Credit' in part:
+                            account_info['available_credit'] = parse_currency(parts[i+1])
+                    
+                    data.update(account_info)
+                    logging.info(f"Account Info: {account_info}")
 
-        return Tradeline(account_name=account_name,
-                        account_number=account_number,
-                        reported_balance=reported_balance,
-                        account_status=account_status,
-                        available_credit=available_credit,
-                        history_points=history_points)
+                # 2. Parse Credit Limit with exact pattern matching
+                if 'Credit Limit' in clean_line:
+                    # Match format: "Credit Limit $500 Account Type REVOLVING"
+                    if '$' in clean_line:
+                        credit_part = clean_line.split('$', 1)[1]
+                        limit_value = credit_part.split(' ', 1)[0].replace(',', '')
+                        try:
+                            data['credit_limit'] = float(limit_value)
+                            logging.info(f"CREDIT LIMIT FOUND: {data['credit_limit']}")
+                        except ValueError:
+                            logging.error(f"Failed to parse credit limit from: {clean_line}")
+                    else:
+                        logging.debug(f"Skipping credit limit header line: {clean_line}")
+
+                    # Parse account type if present
+                    if 'Account Type' in clean_line:
+                        data['account_type'] = clean_line.split('Account Type ', 1)[1].split(' ', 1)[0]
+
+                # 3. Parse Date Opened
+                if 'Date Opened' in clean_line:
+                    # Format: "Date Opened Jan 05, 2017"
+                    date_str = clean_line.split('Date Opened ', 1)[1].strip()
+                    data['date_opened'] = datetime.strptime(date_str, '%b %d, %Y').strftime('%Y-%m-%d')
+
+                # 4. Parse Contact Info
+                if 'PO Box' in clean_line:
+                    data['contact_address'] = clean_line.strip()
+                if 'Wilmington, DE' in clean_line:
+                    data['contact_city_state_zip'] = clean_line.strip()
+                if '(888)' in clean_line:
+                    data['contact_phone'] = clean_line.strip()
+
+            except Exception as e:
+                logging.error(f"Error parsing line: {clean_line}")
+                logging.error(f"Error details: {str(e)}")
+                continue
+
+        # Process collected data
+        if contact_lines:
+            data['contact_name'] = contact_lines[0] if contact_lines else 'N/A'
+            data['contact_address'] = contact_lines[1] if len(contact_lines) > 1 else 'N/A'
+            if len(contact_lines) > 2:
+                data['contact_city_state_zip'] = ' '.join(contact_lines[2:])
+
+        # Convert currency fields
+        currency_fields = [
+            'reported_balance', 'available_credit', 'high_credit', 'credit_limit',
+            'balance', 'amount_past_due', 'actual_payment_amount', 
+            'scheduled_payment_amount', 'charge_off_amount', 'balloon_payment_amount'
+        ]
+        for field in currency_fields:
+            if data[field]:
+                data[field] = parse_currency(data[field])
+
+        with open('debug.log', 'w') as f:
+            f.write('\n'.join(debug_output))
+
+        return Tradeline(**data)
+
+def parse_section(line: str, fields: list) -> dict:
+    """Parse a line with multiple fields using known field markers"""
+    section_data = {}
+    remaining = line
+    
+    for field in fields:
+        if field in remaining:
+            parts = remaining.split(field, 1)
+            value_part = parts[1].split('  ')[0].strip()
+            field_name = field.replace(':', '').lower().replace('/', '_')
+            section_data[field_name] = value_part
+            remaining = parts[1][len(value_part):]
+    
+    return section_data
+
+def parse_currency(value: str) -> Optional[float]:
+    """Improved currency parsing with error handling"""
+    try:
+        return float(value.replace('$', '').replace(',', '').strip())
+    except (ValueError, TypeError, AttributeError):
+        return None
 
 def save_to_file(tradeline: Tradeline, output_file: str):
     with open(output_file, 'w') as f:
@@ -154,76 +301,36 @@ def save_to_file(tradeline: Tradeline, output_file: str):
             f.write(f"{key}: {value}\n")
 
 def save_to_excel(tradeline: Tradeline, output_file: str):
+    df = pd.DataFrame({
+        'Field': list(tradeline.to_dict().keys()),
+        'Value': list(tradeline.to_dict().values())
+    })
+
     with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
-        pd.DataFrame().to_excel(writer, sheet_name='Sheet1', index=False)
+        df.to_excel(writer, index=False, header=False)
         
         workbook = writer.book
         worksheet = writer.sheets['Sheet1']
         
-        # Formats
-        header_fmt = workbook.add_format({'bold': True, 'font_size': 12})
+        # Add formats
+        header_fmt = workbook.add_format({'bold': True, 'bg_color': '#D3D3D3'})
         money_fmt = workbook.add_format({'num_format': '$#,##0'})
-        year_fmt = workbook.add_format({'num_format': '0000'})  # Force 4-digit year
+        date_fmt = workbook.add_format({'num_format': 'yyyy-mm-dd'})
         
-        # Write Summary section
-        current_row = 0
-        summary_data = {
-            'SUMMARY': '',
-            'Account Name': tradeline.account_name,
-            'Account Number': tradeline.account_number,
-            'Reported Balance': tradeline.reported_balance,
-            'Account Status': tradeline.account_status,
-            'Available Credit': tradeline.available_credit,
-            '': '',
-            'ACCOUNT HISTORY': ''
-        }
-        
-        for key, value in summary_data.items():
-            if key in ['SUMMARY', 'ACCOUNT HISTORY']:
-                worksheet.write(current_row, 0, key, header_fmt)
-            elif key in ['Reported Balance', 'Available Credit'] and value is not None:
-                worksheet.write(current_row, 0, key)
-                worksheet.write(current_row, 1, value, money_fmt)
+        # Apply formatting
+        for row_num, (field, value) in enumerate(zip(df['Field'], df['Value'])):
+            worksheet.write(row_num, 0, field, header_fmt)
+            
+            if 'date' in field.lower():
+                worksheet.write(row_num, 1, value, date_fmt)
+            elif isinstance(value, (int, float)):
+                worksheet.write(row_num, 1, value, money_fmt)
             else:
-                worksheet.write(current_row, 0, key)
-                worksheet.write(current_row, 1, value)
-            current_row += 1
-        
-        # Write Account History section
-        current_row += 1
-        
-        # Headers in column A
-        worksheet.write(current_row, 0, 'Year', header_fmt)
-        worksheet.write(current_row + 1, 0, 'Month ID', header_fmt)
-        worksheet.write(current_row + 2, 0, 'Month', header_fmt)
-        worksheet.write(current_row + 3, 0, 'Balance', header_fmt)
-        
-        # Sort history points by year (descending) and month_id
-        sorted_points = sorted(
-            tradeline.history_points, 
-            key=lambda x: (-x.year, -x.month_id)  # Reverse sort for both
-        )
-        
-        # Write history data
-        for col, point in enumerate(sorted_points, start=1):
-            worksheet.write(current_row, col, point.year, year_fmt)  # Use year format
-            worksheet.write(current_row + 1, col, point.month_id)
-            worksheet.write(current_row + 2, col, point.month_name)
-            if point.balance is not None:
-                worksheet.write(current_row + 3, col, point.balance, money_fmt)
-            if point.scheduled_payment is not None:
-                worksheet.write(current_row + 4, col, point.scheduled_payment, money_fmt)
-            if point.actual_payment is not None:
-                worksheet.write(current_row + 5, col, point.actual_payment, money_fmt)
-            if point.credit_limit is not None:
-                worksheet.write(current_row + 6, col, point.credit_limit, money_fmt)
-            if point.amount_past_due is not None:
-                worksheet.write(current_row + 7, col, point.amount_past_due, money_fmt)
+                worksheet.write(row_num, 1, value)
         
         # Set column widths
-        worksheet.set_column('A:A', 25)  # Keep first column wide for labels
-        worksheet.set_column('B:B', 15)  # Keep second column wide for summary values
-        worksheet.set_column('C:Z', 5)   # Set narrow width for month columns
+        worksheet.set_column('A:A', 35)
+        worksheet.set_column('B:B', 40)
 
 def setup_directories():
     input_dir = Path('input')
@@ -261,4 +368,4 @@ def main():
     save_to_excel(tradeline, output_dir / 'tradeline_data.xlsx')
 
 if __name__ == '__main__':
-    main() 
+    main()
